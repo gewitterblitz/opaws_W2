@@ -11,14 +11,9 @@
 
 # netCDF4 libs - you need to fill in the blanks
 #
-NETCDFINC = -I/   /    /netcdf4-64/include
-NETCDFLIB = -L/   /    /netcdf4-64/lib -lm -lnetcdf -L/   /    /hdf5/lib -lhdf5_hl -lhdf5 -lz
 
-
-# netCDF3 libs - you need to fill in the blanks
-#
-NETCDFINC = -I/usr/local/netcdf3_gfortran/include
-NETCDFLIB = -L/usr/local/netcdf3_gfortran/lib -lnetcdff -lnetcdf
+NETCDFINC = -I/usr/local/netcdf/include
+NETCDFLIB = -lm -L/usr/local/netcdf/lib -lnetcdf -lnetcdff 
 
 #=====================================================================================================
 # Fortran and C compiler information - various configurations are setup, try and find one close
@@ -27,17 +22,9 @@ NETCDFLIB = -L/usr/local/netcdf3_gfortran/lib -lnetcdff -lnetcdf
 
 #=====>> Gfortran 
 # 
-FC   = gfortran -m64 -g -O0 -Wl,-stack_size,10000000 -ffixed-line-length-132 -Wunused -Wuninitialized
+FC   = gfortran -m64 -g -O0 -ffixed-line-length-132 -Wunused -Wuninitialized
 CC   = gcc
 CFLAGS = -m64 -c -g -I. -DLONG32 -DUNDERSCORE -DLITTLE -Wunused -Wuninitialized
-
-FC   = gfortran -m32 -g -O0 -ffixed-line-length-132
-CC   = gcc
-CFLAGS = -m32 -c -g -I. -DLONG32 -DUNDERSCORE -DLITTLE
-
-#FC   = ifort -m32 -extend_source
-#CC   = gcc
-#CFLAGS = -m32 -c -g -I. -DLONG32 -DUNDERSCORE -DLITTLE
 
 #=====================================================================================================
 # Leave this stuff alone
@@ -71,7 +58,7 @@ oban.o: oban.f90 structures.inc opaws.inc DART.o
 
 clutter_stats.o: clutter_stats.f90 opaws.inc
 	$(FC) $(OPT) -c $(NETCDFINC) clutter_stats.f90
-
+    
 mosaic_2_dart.o: mosaic_2_dart.f90 opaws.inc
 	$(FC) $(OPT) -c $(NETCDFINC) mosaic_2_dart.f90
 
