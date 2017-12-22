@@ -1,8 +1,0 @@
- obs_sequence
-obs_kind_definitions
-           0
-  num_copies:            1  num_qc:            1
-  num_obs:            0  max_num_obs:            0
-observations                                                                                                                     
-QC radar                                                                                                                         
-  first:            1  last:            0

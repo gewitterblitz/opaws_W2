@@ -52,7 +52,7 @@
    elcor = 0.0,                       ! elevation angle correction (deg)
    azcor = 0.0,                       ! azimuth-angle offset (deg)
                                       !
-   output_prefix = 'vr_cressman',  ! prefix name for output files
+   output_prefix = 'VEL_cress',       ! prefix name for output files
                                       !
    output_beam_info = .true.          ! .true. if beam information should be output
    output_dart = .true.               ! .true. if DART obs_seq.out output should be created

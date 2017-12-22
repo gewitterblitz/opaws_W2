@@ -90,7 +90,6 @@ PROGRAM OBAN
   
   implicit none
 
-  include 'v5df.h'
   include 'structures.inc'
 
   character(LEN=128), parameter :: version = "Version 2.1.1:  Updated 24 June 2013 [DCD]"
@@ -399,9 +398,6 @@ PROGRAM OBAN
   write(6,*) 'output_beam_info = ', output_beam_info
   if (output_dart) then
     write(6,*) 'DART outfile = ', "obs_seq_"//output_prefix(1:ls)//".out"
-  endif
-  if (output_vis5d) then
-    write(6,*) 'Vis5D file   = ', output_prefix(1:ls)//".v5d"
   endif
   if (output_netcdf) then
     write(6,*) 'netCDF file  = ', output_prefix(1:ls)//".nc"
@@ -726,18 +722,7 @@ PROGRAM OBAN
 !
   IF (output_vis5d) THEN
     write(6,*)
-    write(6,*) 'Outputting data to vis5d file'
-
-    IF( nswp > MAXLEVELS) THEN
-      write(6,*) 'Cannot create vis5d file, too many levels'
-    ELSE
-      IF (analysis_type .eq. 2) THEN
-        CALL WRITEV5D(output_prefix, anal, nswp, sweep_info%year, sweep_info%month, sweep_info%day,   &
-                                                 sweep_info%hour, sweep_info%minute, sweep_info%second)
-      ELSE
-        CALL WRITEV5D(output_prefix, anal, 1, cyr, cmo, cda, chr, cmn, cse)
-      ENDIF
-    ENDIF
+    write(6,*) 'V5D is dead - long live V5D.  This feature is no longer avaiable'
   ENDIF
 
 !############################################################################

@@ -52,12 +52,12 @@
    elcor = 0.0,                       ! elevation angle correction (deg)
    azcor = 0.0,                       ! azimuth-angle offset (deg)
                                       !
-   output_prefix = 'ref_cressman',  ! prefix name for output files
+   output_prefix = 'REF_cress',       ! prefix name for output files
                                       !
    output_beam_info = .true.          ! .true. if beam information should be output
    output_dart = .true.               ! .true. if DART obs_seq.out output should be created
    output_netcdf = .true.             ! .true. if NetCDF analysis output should be created
-   output_vis5d = .true.              ! .true. if Vis5D output should be created
+   output_vis5d = .false.             ! .true. if Vis5D output should be created
                                       !
    analysis_type   = 2,               ! Type of analysis
                                       !   1 == 3D Cartesian
@@ -132,4 +132,4 @@
                                       ! For some reason, gfortran needs the character reads to be last, or it quits.
 /
 ======= DO NOT EDIT THIS LINE -> MUST START WITH 6 "=" for the oban formatted I/O to find the start of input files
-"./ref/*.netcdf"
+"./REF_files/*.netcdf"

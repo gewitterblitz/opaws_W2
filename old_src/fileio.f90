@@ -1331,6 +1331,228 @@ END SUBROUTINE WRITENETCDF
       return
       end
 
+
+!############################################################################
+!
+!     ##################################################################
+!     ##################################################################
+!     ######                                                      ######
+!     ######                SUBROUTINE WRITEV5D                   ######
+!     ######                                                      ######
+!     ##################################################################
+!     ##################################################################
+!
+!
+!############################################################################
+!
+!     PURPOSE:
+!
+!     This subroutine writes out a VIS5D format file containing the
+!     synthesized dual-Doppler fields.
+!
+!     Author:  David Dowell
+!
+!     Creation Date:  August 2005
+!
+!     Modifications:  Feb 2010, L Wicker, accomodate new data structure
+!     June 2013, D Dowell, output multiple times for sweep-by-sweep analyses
+!
+!############################################################################
+
+  SUBROUTINE WRITEV5D(prefix, anal, numtimes, year, month, day, hour, minute, second)
+
+    USE DTYPES_module
+
+    implicit none
+
+    include 'v5df.h'
+    include 'opaws.inc'
+
+! Input parameters and data
+
+    character(len=*) prefix      ! output file
+    TYPE(ANALYSISGRID) :: anal   ! analysis grid and radar data in derived type
+    integer numtimes
+    integer(kind=2) :: year(numtimes)
+    integer(kind=2) :: month(numtimes)
+    integer(kind=2) :: day(numtimes)
+    integer(kind=2) :: hour(numtimes)
+    integer(kind=2) :: minute(numtimes)
+    integer(kind=2) :: second(numtimes)
+
+! Local variables
+
+    integer i, j, k, s           ! grid indices
+    integer nx, ny, nz           ! no. of grid points in x, y, and z directions
+    integer nfld                 ! number of fields
+    integer npass
+    integer ls
+
+! Vis5d variables
+
+    integer n
+    integer it, iv
+    real(kind=4), allocatable :: G(:,:,:)
+
+    integer nr, nc, nl
+    integer numvars
+    character(len=10) varname(MAXVARS)
+    integer dates(MAXTIMES)
+    integer times(MAXTIMES)
+    real northlat
+    real latinc
+    real westlon
+    real loninc
+    real bottomhgt
+    real hgtinc
+    character(len=256) file_string
+
+    integer ndays(12)
+
+! Vis5d variables initialized to missing values
+
+    data nr,nc,nl / IMISSING, IMISSING, IMISSING /
+    data numvars / IMISSING /
+    data (varname(i),i=1,MAXVARS) / MAXVARS*"          " /
+    data (dates(i),i=1,MAXTIMES) / MAXTIMES*IMISSING /
+    data (times(i),i=1,MAXTIMES) / MAXTIMES*IMISSING /
+    data northlat, latinc / MISSING, MISSING /
+    data westlon, loninc / MISSING, MISSING /
+    data bottomhgt, hgtinc / MISSING, MISSING /
+    data ndays /31,29,31,30,31,30,31,31,30,31,30,31/
+
+!############################################################################
+!
+!   Get dimension sizes
+
+    nx   = size(anal%xg)
+    ny   = size(anal%yg)
+    nz   = size(anal%zg)
+    nfld = size(anal%f,dim=4)
+    npass = size(anal%f,dim=5)
+
+    IF (nfld .le. 0) THEN
+      write(6,*) 'WriteV5D:  Error:  Number of fields <= ZERO!'
+      stop
+    ENDIF
+
+! Initialize variables
+
+    nr = ny
+    nc = nx
+    if (numtimes.gt.1) then
+      nl = 1                       ! sweep-by-sweep data
+    else
+      nl = nz
+    endif
+    numvars = nfld
+
+    allocate(G(ny,nx,nz))
+
+    DO s = 1,nfld
+      varname(s) = anal%name(s)
+    ENDDO
+
+    northlat = anal%ymin + (ny-1)*anal%dy
+    northlat = anal%glat + (ny-1)*anal%dy*(1./111.) + anal%ymin*(1./111.)
+    latinc   = anal%dy
+    latinc   = anal%dy*(1./111.)
+    westlon  = -anal%xmin
+    westlon  = -anal%glon - anal%xmin*(180./3.14159)/(6371.*cos(anal%glat*3.14159/180.))
+    loninc   = anal%dx
+    loninc   = anal%dx*(180./3.14159)/(6371.*cos(anal%glat*3.14159/180.))
+
+    DO WHILE ( (northlat.gt.90.0)                 .or. &
+              ((northlat-(ny-1)*latinc).lt.-90.0) .or. &
+                (westlon.lt.-90.0)                .or. &
+               ((westlon+(nx-1)*loninc).gt.90.0) )
+      northlat = 0.1*northlat
+      latinc   = 0.1*latinc
+      westlon  = 0.1*westlon
+      loninc   = 0.1*loninc
+    ENDDO
+
+! DCD 11/24/10
+!    bottomhgt = 0.0
+    bottomhgt = anal%zmin
+    hgtinc    = anal%dz
+
+! Compute YYDDD for vis5d.
+
+    DO it = 1,numtimes
+      dates(it) = mod(year(it),100) * 1000
+      IF (month(it).gt.1) THEN
+        DO i = 1, month(it)-1
+          dates(it) = dates(it) + ndays(i)
+        ENDDO
+      ENDIF
+      dates(it) = dates(it) + day(it)
+      times(it) = hour(it)*10000 + minute(it)*100 + second(it)
+    ENDDO
+
+! Create the v5d file.
+
+    ls = index(prefix, ' ') - 1
+
+    write(6,*) 'Creating Vis5D file:  ', prefix(1:ls)//'.v5d'
+
+    file_string = prefix(1:ls)//".v5d "
+
+    n = V5DCREATESIMPLE(file_string, numtimes, numvars, nr, nc, nl,  &
+                        varname, times, dates, northlat, latinc, westlon, loninc, bottomhgt, hgtinc )
+
+    IF (n .eq. 0) THEN
+      write(6,*) 'WriteV5D:  !!! Error creating v5d file !!!'
+      stop
+    ENDIF
+
+    DO it = 1,numtimes
+      DO iv = 1,numvars
+
+        DO k = 1,nl
+          DO j = 1,nr
+            DO i = 1,nc
+
+               if (numtimes.gt.1) then
+                 G(nr-j+1,i,k) = anal%f(i,j,it,iv,npass)    ! sweep-by-sweep data
+               else
+                 G(nr-j+1,i,k) = anal%f(i,j,k,iv,npass)
+               endif
+
+               IF (G(nr-j+1,i,k) .eq. sbad) G(nr-j+1,i,k) = 9.9E30
+
+            ENDDO
+          ENDDO
+        ENDDO
+
+! Write the 3-D grid to the v5d file
+
+       n = V5DWRITE( it, iv, G )
+
+       IF (n .eq. 0) THEN
+         write(6,*) 'WriteV5D:  !!! Error writing to v5d file !!!'
+         stop
+       ENDIF
+
+       ENDDO
+    ENDDO
+
+! Close the v5d file and exit
+
+    n = V5DCLOSE()
+
+    IF (n .eq. 0) THEN
+      write(6,*) 'WriteV5D:  !!! Error closing v5d file !!!'
+      stop
+    ENDIF
+
+    deallocate(G)
+
+
+  RETURN
+  END
+
+
 !############################################################################
 !
 !     ##################################################################
