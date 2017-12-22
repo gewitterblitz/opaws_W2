@@ -33,9 +33,9 @@ EXEC = x.oban
 EXECcs = x.clutter_stats
 EXECmd = mosaic_2_dart
 
-OBJS = DART.o oban_module.o dict_module.o oban_namelist.o derived_types.o util.o fileio.o read_dorade.o binio.o v5d.o 
-OBJScs = DART.o dict_module.o oban_namelist.o derived_types.o fileio.o util.o read_dorade.o binio.o v5d.o
-OBJSmd = DART.o dict_module.o oban_namelist.o derived_types.o fileio.o util.o read_dorade.o binio.o v5d.o
+OBJS = DART.o oban_module.o dict_module.o oban_namelist.o derived_types.o util.o fileio.o read_dorade.o 
+OBJScs = DART.o dict_module.o oban_namelist.o derived_types.o fileio.o util.o read_dorade.o 
+OBJSmd = DART.o dict_module.o oban_namelist.o derived_types.o fileio.o util.o read_dorade.o 
 
 default: $(EXEC) $(EXECcs) $(EXECmd)
 
@@ -49,7 +49,7 @@ $(EXECmd): $(OBJSmd) mosaic_2_dart.o
 	$(FC) $(OPT) -o $(EXECmd) mosaic_2_dart.o $(OBJSmd) $(NETCDFLIB)
 
 clean:
-	rm $(EXEC) oban.o $(OBJS) $(EXECcs) clutter_stats.o $(OBJScs) $(EXECmd) mosaic_2_dart.o $(OBJSmd) *.mod ncgen.input *.pyc sweep_file_list.txt
+	rm $(EXEC) oban.o $(OBJS) $(EXECcs) clutter_stats.o $(OBJScs) $(EXECmd) mosaic_2_dart.o $(OBJSmd) *.mod 
 
 # Individual compilation instructions
 
@@ -85,9 +85,3 @@ oban_namelist.o: oban_namelist.f90 opaws.inc
 
 dict_module.o: dict_module.f90
 	$(FC) $(OPT) -c dict_module.f90
-
-binio.o: binio.c
-	$(CC) $(CFLAGS) binio.c -o binio.o
-
-v5d.o: v5d.c
-	$(CC) $(CFLAGS) v5d.c -o v5d.o
