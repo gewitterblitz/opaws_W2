@@ -1,0 +1,148 @@
+&parameters
+   nx = 70,                           ! no. of grid points in x direction
+   ny = 70,                           ! no. of grid points in y direction
+   nz = 1,                            ! no. of grid points in z direction
+                                      !
+   xmin = -80.0,                      ! coordinates of lower southwest corner (in km)
+   ymin = -80.0,                      !     of analysis grid relative to the 
+   zmin = 0.0,                        !     origin given by glat, glon, galt
+                                      !
+   dx = 2.0,                          ! grid spacing in x direction (km)
+   dy = 2.0,                          ! grid spacing in y direction (km)
+   dz = 1.0,                          ! grid spacing in z direction (km)
+                                      !
+   glon = -97.461945,                 ! longitude of grid origin (deg)
+   glat = 35.235832,                  ! latitude  of grid origin (deg)
+   galt = 0.373,                      ! altitude of grid origin (km MSL)
+                                      ! 
+   rlon = -97.461945,                 ! radar longitude (deg)
+   rlat = 35.235832,                  ! radar latitude (deg)
+   ralt = 0.373,                      ! radar altitude (km MSL)
+                                      ! 
+   map_proj = 0,                      ! map projection (for relating lat, lon to x, y):
+                                      !   0 = flat earth
+                                      !   1 = oblique azimuthal (not implemented...)
+                                      !   2 = Lambert conformal
+                                      !
+   tlat1 =  30.0,                     ! First true latitude (deg N) of Lambert conformal projection
+   tlat2 =  60.0,                     ! Second true latitude (deg N) of Lambert conformal projection
+   clon  = -97.461945,                ! Reference longitude (deg E) of Lambert conformal projection
+                                      ! 
+   cyr = 2003,                        ! reference date used for (optional) time-to-space conversion:  year
+   cmo = 05,                          ! "                                                         ": month
+   cda = 08,                          ! "                                                         ": day
+   chr = 22,                          ! reference time used for (optional) time-to-space conversion: hour
+   cmn = 02,                          ! "                                                         ": minute
+   cse = 28,                          ! "                                                         ": second
+                                      ! 
+   ut = 0.0,                          ! x-translation velocity (m/s) used for time-to-space conversion
+   vt = 0.0,                          ! y-translation velocity (m/s) used for time-to-space conversion
+                                      ! If UT=VT=0, then new date and time are NOT USED!
+                                      ! 
+   year_cor = 0,                      ! offset in years to correct each ray
+   day_cor = 0,                       ! offset in days to correct each ray
+   sec_cor = -150,                    ! offset in seconds to correct each ray
+                                      ! 
+   umass_data = .false.               ! .true. (.false.) if UMass radar-data corrections are (not) needed
+                                      ! 
+   az_corr_flag = 0,                  ! method of additional azimuth-angle correction
+                                      !   0 = none
+                                      !   1 = average current and previous angle
+                                      !
+   elcor = 0.0,                       ! elevation angle correction (deg)
+   azcor = 0.0,                       ! azimuth-angle offset (deg)
+                                      !
+   output_prefix = 'sweep_cressman',  ! prefix name for output files
+                                      !
+   output_beam_info = .true.          ! .true. if beam information should be output
+   output_dart = .true.               ! .true. if DART obs_seq.out output should be created
+   output_netcdf = .true.             ! .true. if NetCDF analysis output should be created
+   output_vis5d = .true.              ! .true. if Vis5D output should be created
+                                      !
+   analysis_type   = 2,               ! Type of analysis
+                                      !   1 == 3D Cartesian
+                                      !   2 == 2D sweep-by-sweep
+   method = 1,                        ! Interpolation method:
+                                      !   1 == Cressman
+                                      !   2 == Barnes
+   hsp0 = 1.00,                       ! either Cressman horiz. radius of influence (km) or Barnes smoothing parameter (kappa, in km**2)
+   vsp0 = 1.00,                       ! either Cressman vert. radius of influence (km) or Barnes smoothing parameter (kappa, in km**2)
+   gamma = 0.3,                       ! gamma parameter for multi-pass Barnes analysis
+   npass = 1,                         ! number of passes
+                                      !
+   cm_use_clutter_mask = .false.      ! .true. if clutter mask produced by clutter_stats should be implemented
+   cm_min_fixed_clutter_freq = 0.70   ! minimum frequency (0.0 - 1.0) of fixed clutter from clutter_stats that will be considered clutter
+   cm_min_moving_clutter_freq = 1.01  ! minimum frequency (0.0 - 1.0) of moving clutter from clutter_stats that will be considered clutter
+   cm_halo = 0                        ! number of additional neighboring bins in each direction to search for maximum in clutter frequency
+   cm_use_refl_test = .false.         ! .true. if clutter masking should be conditional on difference between observed and mean reflectivity 
+   cm_refl_fname = ""                 ! name of reflectivity field in input radar data
+   cm_refl_exceedance = 20.0          ! reflectivity exceedance above mean (dBZ) for which clutter mask is ignored
+   cm_min_obs = 1                     ! minimum number of observations for identifying clutter
+   cm_min_sweeps = 1                  ! minimum number of sweeps for identifying clutter
+   cm_ncfile = ""                     ! netcdf file that contains clutter-mask information (output from clutter_stats)
+                                      !
+   append_eval = .false.              ! .true. if "_EVAL" should be appended to the names of DART observation types
+   use_clear_air_type = .false.       ! .true. if clear-air reflectivity ob. type should be used for DART output
+   clear_air_skip = 0                 ! thinning factor for clear-air reflectivity data
+                                      !
+   height_max = 100.0                 ! height (km above grid origin) above which observations are discarded
+                                      !
+   minrange = 10.0,                   ! minimum-range threshold (in km, data closer to radar are discarded)
+   mincount = 3,                      ! threshold for minimum number of data gates required
+                                      !   to produce an objectively-analyzed observation
+   minsum   = 0.1,                    ! threshold for minimum sum of weights required to produce
+                                      !   an objectively-analyzed observation
+                                      !
+   allow_extrapolation = .true.       ! should extrapolation be allowed?
+                                      !   .true. for standard objective analysis, .false. for interpolation only
+                                      !
+   remove_sector = .false.            ! remove a sector of the data -> useful for blending MPAR quadrants with KOUN
+   remove_sector_begin = 350.0        ! starting azimuth angle (deg) for removing a sector
+   remove_sector_end   = 10.0         ! ending azimuth angle (deg) for removing a sector
+                                      !
+   radar_data_format = 1,             ! radar data format: 1=dorade sweep files, 2=netcdf (FORAY)
+                                      !
+   nfld = 2,                          ! number of data fields to be gridded
+                                      !
+   nswp = 14                          ! controls file I/O:  nswp = -1 ==> read all files in directory at bottom of input file
+                                      !                     nswp >  0 ==> read nswp # of filenames at bottom of input file
+/
+&fields
+   fill_flag   =    1,    0,          ! fill missing field values with a specified value? (0=no, 1=yes)
+   fill_value  =  0.0,  0.0,          ! replacement value, if fill_flag==1
+                                      !
+   unfold_flag =    0,    0,          ! locally unfold field? (0=no, 1=yes)
+                                      !
+   error       =  5.0,  2.0,          ! Observational error standard deviation for the DART observations
+                                      !
+                                      ! These are extra filters for the data.  The thresholding is done on
+                                      ! the first field read in, which is usually DBZ.  If you are not sure
+                                      ! what to use, turn these off.
+   pre_oban_filter_flag  = 0,   0,    ! PRE-oban filter ON=1 (lower threshold) or -1 (upper threshold), OFF=0
+   pre_oban_filter_value = 10., 10.,  ! All fields are set to missing below/above this value 
+                                      ! Example:
+                                      !         Threshold Vr on dBZ:  pre_oban_filter_flag = 1, Vr=missing for dBZ < 20.
+                                      !
+   post_oban_filter_flag  = 0,   0,   ! POST-oban filter ON=1 (lower threshold) or -1 (upper threshold), OFF=0
+   post_oban_filter_value = 10., 10., ! All fields are set to missing below/above this value 
+                                      ! Example:
+                                      !         Threshold Vr on dBZ:  post_oban_filter_flag = -1, Vr=missing for dBZ > 70.
+                                      !
+   fieldnames  = 'DZ', 'VU',          ! Names of the fields to be read from the dorade/netcdf radar-data files
+                                      ! For some reason, gfortran needs the character reads to be last, or it quits.
+/
+======= DO NOT EDIT THIS LINE -> MUST START WITH 6 "=" for the oban formatted I/O to find the start of input files
+./koun_sweep/swp.1030508220458.OSF_RVP7.0.0.5_PPI_v1
+./koun_sweep/swp.1030508220515.OSF_RVP7.0.1.5_PPI_v1
+./koun_sweep/swp.1030508220534.OSF_RVP7.0.2.5_PPI_v1
+./koun_sweep/swp.1030508220551.OSF_RVP7.0.3.5_PPI_v1
+./koun_sweep/swp.1030508220609.OSF_RVP7.0.4.5_PPI_v1
+./koun_sweep/swp.1030508220645.OSF_RVP7.0.5.5_PPI_v1
+./koun_sweep/swp.1030508220703.OSF_RVP7.0.6.5_PPI_v1
+./koun_sweep/swp.1030508220721.OSF_RVP7.0.7.5_PPI_v1
+./koun_sweep/swp.1030508220740.OSF_RVP7.0.8.7_PPI_v1
+./koun_sweep/swp.1030508220757.OSF_RVP7.0.10.0_PPI_v1
+./koun_sweep/swp.1030508220833.OSF_RVP7.0.12.0_PPI_v1
+./koun_sweep/swp.1030508220851.OSF_RVP7.0.14.0_PPI_v1
+./koun_sweep/swp.1030508220909.OSF_RVP7.0.16.7_PPI_v1
+./koun_sweep/swp.1030508220927.OSF_RVP7.0.19.5_PPI_v1
