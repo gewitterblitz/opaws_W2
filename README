@@ -59,7 +59,7 @@ BUILD instructions
 
 changes for version 1.0 of OPAWS_W2 (22 December 2017) - LJW
 ---------------------------------------------------------------------------
-* This version has rewritten the old "foray" IO subruotine to read WDSS-II radial files.
+* This version has rewritten the old "foray" IO subroutine to read WDSS-II radial files.
   Unclear how general it is, but its there for the trying.  
 * Removed Vis5D support.
 
