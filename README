@@ -57,6 +57,14 @@ BUILD instructions
 
 ================================================================================
 
+changes for version 1.0 of OPAWS_W2 (22 December 2017) - LJW
+---------------------------------------------------------------------------
+* This version has rewritten the old "foray" IO subruotine to read WDSS-II radial files.
+  Unclear how general it is, but its there for the trying.  
+* Removed Vis5D support.
+
+================================================================================
+
 changes for version 2.1 of OPAWS (24 February 2012) - DCD
 ---------------------------------------------------------------------------
 * A new tool has been added for removing ground clutter.  The technique is based on the Clutter Residue Editing Map
